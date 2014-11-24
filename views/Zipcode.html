@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+ <head>
+  <link rel="SHORTCUT ICON" href="/favicon.ico" type="image/x-icon" />
+  <link rel="canonical" href="http://www.usnaviguide.com/zip.htm">
+  <meta http-equiv="refresh" content="7200">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+  <meta name="description" content="The Most Accurate Free USA Zip Code Map Anywhere! Find USPS postal Zip codes by address or click on the map to display the zip code as a boundary map."/>
+  <title>Free USPS Lookup and Boundary Map</title>
+  <style type="text/css">
+  .TEXT0
+  {
+   font-family: Verdana, Sans-Serif, monospace;
+   font-size: .6em;
+  }
+  .TEXT1
+  {
+   font-family: Verdana, Sans-Serif, monospace;
+   font-size: .8em;
+  }
+  .TEXT2
+  {
+   font-family: Verdana, Sans-Serif, monospace;
+   font-size: 1em;
+  }
+  .HTEXT0
+  {
+   font-family: Verdana, Sans-Serif, monospace;
+   font-size: .6em;
+   color:red;
+  }
+  .HTEXT1
+  {
+   font-family: Verdana, Sans-Serif, monospace;
+   font-size: .8em;
+   color:red;
+  }
+  .HTEXT2
+  {
+   font-family: Verdana, Sans-Serif, monospace;
+   font-size: 1em;
+   color:red;
+  }
+  .HTEXT3
+  {
+   font-family: Verdana, Sans-Serif, monospace;
+   font-size: 1.5em;
+   color:red;
+  }
+  </style>
+
+  <script type="text/javascript">
+   // Stop some malicious behaviors...
+   if ( top != self)
+   {
+    top.location.replace(document.location);
+    alert("For security reasons, framing is not allowed; click OK to remove the frames.")
+   }       
+   if ( location.search.length > 0 )
+   {
+    location.search = '' ;
+   }
+  </script>
+
+  <script type="text/javascript" src="http://apis.google.com/js/plusone.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+  <script>
+   var map;
+   var geocoder;
+   var imageMapType;
+   var ZIP_MAPTYPE_ID = 'ziphybrid';
+   var chkar = [ ] ;					// Zips Found
+   var zipar = [ ] ;					// Zips Found
+   var marar = [ ] ;					// Marker Array
+   var icons = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'] ;
+   var lastclick = "" ;					// Last Clicked Point
+   var infowindow ;
+   var adUnit ;
+
+   var tskey = "ff07813920" ;
+
+   function initialize() {
+
+    geocoder = new google.maps.Geocoder();
+
+    imageMapType = new google.maps.ImageMapType({
+     getTileUrl: function(coord, zoom) {
+      if (zoom < 5 || zoom > 18 ) {
+       return null;
+      }
+      var server = coord.x % 6 ;
+      var url = "http://ts" + server + ".usnaviguide.com/tileserver.pl?X=" + coord.x + "&Y=" + coord.y + "&Z=" + zoom + "&T=" + tskey + "&S=Z1001" ;
+      return url ;
+     },
+     tileSize: new google.maps.Size(256, 256),
+     opacity:.5,
+     name:'Zip Code'
+    });
+   
+    var mapOptions = {
+     minZoom: 5,
+     maxZoom: 18,
+     zoom: 5,
+     center: new google.maps.LatLng(35, -89),
+     mapTypeIds: google.maps.MapTypeId.ROADMAP
+
+    };
+
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+    map.overlayMapTypes.push(imageMapType);
+
+    google.maps.event.addListener(map, 'click', function(e) {
+     zippoly(e.latLng,'');
+    });
+    infowindow = new google.maps.InfoWindow();
+   }
+
+// Find a zip code and cause it to be drawn on the map...
+
+   function findzip( zipcode )
+   {
+     if ( CheckZip( zipcode.zip.value ) > -1 )
+    {
+     alert("Zip Code Keyed Has Already Been Selected.") ;
+    } else
+    {
+	alert("zipcode"+zipcode.zip.value)
+     zippoly( 0, zipcode.zip.value ) ;
+    }
+   }
+
+// Clear overlays, Div area and restore map...
+
+   function clearmap( zipcode )
+   {
+    zipcode.zip.value = "" ;
+    document.getElementById("message").innerHTML = "" ;
+    for (var i = 0; i < marar.length; i++)
+    {
+     marar[i].setMap(null);
+    }
+    lastclick = "" ;
+    zipar = [ ] ;
+    chkar = [ ] ;
+    marar = [ ] ;
+   }
+
+   
+
+// Open an Infowindow when the zip link is clicked in the message div...
+        
+   function zipLink(zip)
+   {
+    for (var i = 0; i < zipar.length; i++)
+    {
+     if ( zipar[i] == zip )
+     {
+      break ;
+     } 
+    }
+    google.maps.event.trigger(marar[i], 'click') ;
+   }
+
+// Check to see if a Zip has already been selected...
+        
+   function CheckZip(zip)
+   {
+    for (var i = 0; i < chkar.length; i++)
+    {
+     if ( chkar[i] == zip )
+     {
+      return(i) ;
+     } 
+    }
+    return(-1) ;
+   }
+
+// Find a zip code and return the coordinates along with other information...
+
+   function zippoly( point, zip )
+   {
+
+ var html="<p>this is testing</p>";
+   if(zip=='')
+   {   
+	
+	alert("point"+point);
+	alert("zip"+zip);
+    	point1=point;// call the api to convet lat lng into zip and call all the content of that zip and set the point on map
+   }
+   else{
+	//call the api to convert zip into lat lng and call all the content of that zip and set the point on map
+	var myLatlng = new google.maps.LatLng(37.37015718405753, -87.890625);
+  
+	point1=myLatlng;
+	}
+	marker = new google.maps.Marker({
+    	map:map,
+    	draggable:true,
+    	animation: google.maps.Animation.DROP,
+    	position: point1
+  });
+ 	 google.maps.event.addListener(marker, 'click', function() {
+ 	 infowindow.setContent(html);
+     	 infowindow.open(map, marker);
+	 if (marker.getAnimation() != null) {
+		marker.setAnimation(null);
+	  } else {
+		marker.setAnimation(google.maps.Animation.BOUNCE);
+	  }
+  });
+
+ map.setCenter( point1 ) ;
+ map.setZoom( 11 ) ;
+}
+
+  
+
+   // Hide the Zip Code overlay...
+
+   function zipLayer()
+   {
+    if ( document.getElementById("zipLayerBox").checked )
+    {
+     imageMapType.set('opacity', 0.5); 
+    } else
+    {
+     imageMapType.set('opacity', 0); 
+    }
+   }
+   google.maps.event.addDomListener(window, 'load', initialize);
+
+  </script>
+
+ </head>
+ <body text="black" >
+
+  <img src="http://www.google.com/mapfiles/marker.png" style="display:none" />
+  <img src="http://www.google.com/mapfiles/shadow50.png" style="display:none" />
+  <img src="http://www.google.com/mapfiles/markerTransparent.png" style="display:none" />
+  <img src="http://www.google.com/mapfiles/markerie.gif" style="display:none" />
+  <img src="http://www.google.com/mapfiles/dithshadow.gif" style="display:none" />
+
+  <div id="main" title="" style="text-align:left; padding:4px;">
+   <div id="form" title="zip code search form" class="TEXT2" style="height:25px">
+    <form name=zipcode onsubmit="javascript:return false;">
+     Key Zip <input type=text name=zip> 
+     
+     <input type=BUTTON value="Find Zipcode" onclick="findzip(zipcode)" name="BUTTON">
+     or click on the map.
+    <input type=BUTTON value="Clear" onclick="clearmap(zipcode)" name="CLEARBUTTON">
+    <input type="checkbox" id="zipLayerBox" checked onclick="zipLayer()">Zip Layer
+    </form>
+   </div>
+   <table width="100%" height="100%" border=0 cellPadding=2 cellSpacing=2>
+    <tr>
+     <td>
+      <script language="javascript">
+      <!--
+      if( window.innerHeight )
+      {
+       var width = window.innerWidth - 344 ;
+       var height = window.innerHeight - 140 ; 
+       if (width < 200) { width = 200; }
+      } else
+      {
+       var width = document.documentElement.offsetWidth - 384 ;
+       var height = document.documentElement.offsetHeight - 180 ; 
+       if (width < 200) { width = 200; }
+      }
+      document.write('<center><div id="map-canvas" style="width: ' + width  + 'px; height:' + height + 'px; border: thin solid black;"></center>') ;
+      // -->
+      </script>
+
+      </div>
+     </td>
+      
+      </div>
+
+     
+<!-- Conversant Media 300x250 Medium Rectangle CODE for Zip Code Maps -->
+
+<!-- Conversant Media 300x250 Medium Rectangle CODE for Zip Code Maps -->
+
+      </div>
+     </td>
+    </tr>
+   </table>
+   
+  </div>
+  <div id="loading" class="HTEXT2" style="background-color:#D1D0CD; position:absolute; left:200px; top:200px;"></div>
+ </body>
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-813480-6', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+</html>
+
