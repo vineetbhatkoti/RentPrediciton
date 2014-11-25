@@ -42,6 +42,14 @@ exports.getWordData=function(req,res)
 
 
 
+exports.getLineGraph = function(req,res)
+{
+	
+	var lineGraph = require('../database/LineGraph');
+	lineGraph.getLineData(req,res);
+
+};
+
 
 // redundant 
 exports.display =function(req, res){
@@ -97,3 +105,4 @@ if(err)throw err;
 });
 }
 };
+
