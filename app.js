@@ -12,11 +12,17 @@ var express = require('express')
 var hbs = require('hbs');
 var app = express();
 
-
+var net = require('net');
 
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+
+//var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080
+//var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
+
+
+app.set('ip', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8080);
 app.set('views', __dirname + '/views');
 //app.engine('html', engines.mustache);
 app.engine('html', hbs.__express);
@@ -45,9 +51,12 @@ app.post('/getWordData',routes.getWordData);
 app.get('/getLineGraph',routes.getLineGraph);
 app.get('/Piechart',routes.getPieChart);
 
+http.createServer(app,function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('Hello World\n');
+}).listen(app.get('port'), app.get('ip'));
 
 
-
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+// http.createServer(app).listen(app.get('port'), function(){
+//   console.log('Express server listening on port ' + app.get('port'));
+// });
