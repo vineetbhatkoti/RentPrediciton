@@ -51,6 +51,13 @@ exports.getLineGraph = function(req,res)
 };
 
 
+exports.getPieChart = function(req,res)
+{
+	res.render("Piechart.html");
+};
+
+
+
 // redundant 
 exports.display =function(req, res){
 

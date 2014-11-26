@@ -43,7 +43,7 @@ app.post('/displaycities',routes.display);
 app.get('/getWordColud',routes.wordCloudDislplay);
 app.post('/getWordData',routes.getWordData);
 app.get('/getLineGraph',routes.getLineGraph);
-
+app.get('/Piechart',routes.getPieChart);
 
 
 
